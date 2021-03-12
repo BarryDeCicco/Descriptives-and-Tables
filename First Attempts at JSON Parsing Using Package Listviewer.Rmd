@@ -1,0 +1,118 @@
+---
+title: "First Attempts at JSON Parsing Using Package Listviewer"
+author: "Barry DeCicco"
+date: "8/8/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## **Listviewer**
+
+### Listviewer is a package for the diplay of lists. In this example I am using the jsonedit() function to create a tree view of lists.
+
+```{r set-up - load libraries and data sets}
+
+library(tidyverse)
+library(listviewer)
+library(jsonlite)
+
+gapminder <- readRDS("Data/gapminder.rds")
+
+```
+
+### Tree View of Data Frame
+
+#### Since a data frame is a list of vectors, the jsonedit() will display a tree view:
+
+```{r tree view of gapminder, echo=TRUE}
+
+head(gapminder)
+
+jsonedit(listdata=gapminder)
+
+```
+
+#### **In the original HTML file, you could click on the arrows above, and display more information.**
+
+```{r INSERT NAME HERE, echo=TRUE}
+
+
+```
+
+### From the example in help - this lists all of the parameters contained in/set by par():
+
+```{r Look at par(), echo=TRUE}
+
+
+jsonedit(listdata=par())
+
+```
+
+### Examining the structure of the results of summary():
+
+```{r Summary, echo=TRUE}
+
+summary_gapminder <- summary(gapminder)
+class(summary_gapminder)
+jsonedit(listdata=summary_gapminder)
+
+```
+
+#### **Again, in the original HTML file, you could click on the arrows above, and display more information about the summary.**
+
+
+### Apparently the str() function command  is of class NULL; jsonedit() returns an empty object:
+
+```{r Structure, echo=TRUE}
+
+structure_gapminder <- str(gapminder)
+class(structure_gapminder)
+jsonedit(listdata=structure_gapminder)
+
+
+```
+
+### List example from: http://www.r-tutor.com/r-introduction/list
+
+### It turns out that jsonedit() returns a list, which can **not** be coerced into a data frame (at least from what I know of R):
+
+```{r list example, echo=TRUE}
+
+n = c(2, 3, 5) 
+s = c("aa", "bb", "cc", "dd", "ee") 
+b = c(TRUE, FALSE, TRUE, FALSE, FALSE) 
+x = list(n, s, b, 3)   # x contains copies of n, s, b 
+
+class(x)
+head(x)
+
+jsonedit_list <- jsonedit(listdata=x) 
+  
+class(jsonedit(jsonedit_list))
+
+jsonedit_list
+
+```
+
+### jsonedit() returns a list, which can be coerced to a data frame using **unlist()**:
+
+```{r list convert to data frame, echo=TRUE}
+
+
+jsonedit_df <- jsonedit_list %>%
+  unlist(.)                     %>%
+  as.data.frame()  
+  
+class(jsonedit_df)
+
+```
+
+
+```{r print head of converted data frame, echo=TRUE}
+
+jsonedit_df
+
+```
